@@ -8,6 +8,7 @@ function MapSurface({ style, items }) {
   let defaultPosition = { lat: -1.3187258, lng: 36.8086999 };
   const [userPosition, setUserPosition] = useState(null);
   const [mapCenter, setMapCenter] = useState(defaultPosition);
+  const [displayMarkers, setDisplayMarkers] = useState(items);
 
   const getUserLocation = () => {
     // if geolocation is supported by the users browser
@@ -21,6 +22,8 @@ function MapSurface({ style, items }) {
           // update the value of userlocation variable
           setMapCenter({ lat: latitude, lng: longitude });
           setUserPosition({ lat: latitude, lng: longitude });
+          addDisplayMarker({ lat: latitude, lng: longitude });
+          
         },
         // if there was an error getting the users location
         (error) => {
@@ -33,6 +36,17 @@ function MapSurface({ style, items }) {
       console.error("Geolocation is not supported by this browser.");
     }
   };
+
+  const addDisplayMarker = (position) => {
+    let lst = [...displayMarkers]
+    let markerIndex = lst.findIndex(item => item.text === "Your Location");
+    if (markerIndex >= 0) {
+        lst[markerIndex].position = position;
+    } else {
+        lst.push({position, text: "Your Location"})
+    }
+    setDisplayMarkers(lst);
+  }
 
   return (
     <div
@@ -65,15 +79,9 @@ function MapSurface({ style, items }) {
               setMapCenter(null);
             }}
           >
-            <MapMarker
-              key="1"
-              obj={{ position: defaultPosition, text: "Dr. Juma" }}
-            />
-            <MapMarker
-              key="2"
-              obj={{ position: userPosition, text: "Your Location" }}
-            />
-            {items.map((item, i) => (
+            
+            
+            {displayMarkers.map((item, i) => (
               <MapMarker key={i} obj={item} />
             ))}
           </Map>
