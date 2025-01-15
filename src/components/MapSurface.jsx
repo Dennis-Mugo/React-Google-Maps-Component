@@ -4,11 +4,15 @@ import "./MapSurface.css";
 
 import { AdvancedMarker, APIProvider, Map } from "@vis.gl/react-google-maps";
 
-function MapSurface({ style, items }) {
+function MapSurface({ style, items, defaultZoom }) {
   let defaultPosition = { lat: -1.3187258, lng: 36.8086999 };
   const [userPosition, setUserPosition] = useState(null);
   const [mapCenter, setMapCenter] = useState(defaultPosition);
   const [displayMarkers, setDisplayMarkers] = useState(items);
+
+  useEffect(() => {
+    setDisplayMarkers(items);
+  }, [items]);
 
   const getUserLocation = () => {
     // if geolocation is supported by the users browser
@@ -67,7 +71,7 @@ function MapSurface({ style, items }) {
             style={{ width: "100%", height: "90vh" }}
             defaultCenter={mapCenter}
             center={mapCenter}
-            defaultZoom={17}
+            defaultZoom={defaultZoom}
             gestureHandling={"greedy"}
             disableDefaultUI={false}
             mapId={import.meta.env.VITE_MAPS_ID}
